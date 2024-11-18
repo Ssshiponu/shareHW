@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}{{ notes.title }} - ShareHW.net{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('content.notes_list') }}">Notes</a></li>
+            <li class="breadcrumb-item active">{{ notes.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h3 mb-0">{{ notes.title }}</h1>
+                <span class="badge {% if notes.is_public %}bg-success{% else %}bg-secondary{% endif %}">
+                    {{ 'Public' if notes.is_public else 'Private' }}
+                </span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Notes Details -->
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-3">Description</h5>
+                        <p class="mb-0">{{ notes.description }}</p>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="text-muted mb-3">Subject</h5>
+                            <p class="mb-0">{{ notes.subject|title }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-muted mb-3">Topic</h5>
+                            <p class="mb-0">{{ notes.topic }}</p>
+                        </div>
+                    </div>
+
+                    <!-- File Download -->
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-3">Attached File</h5>
+                        <a href="{{ url_for('content.download_file', content_type='notes', filename=notes.file_path) }}" 
+                           class="btn btn-primary">
+                            <i class="fas fa-download me-1"></i> Download File
+                        </a>
+                    </div>
+
+                    <!-- Comments Section (Placeholder for future implementation) -->
+                    <div class="mt-5">
+                        <h5 class="text-muted mb-3">Comments</h5>
+                        <div class="text-center text-muted py-4">
+                            <i class="far fa-comments fa-2x mb-2"></i>
+                            <p>Comments feature coming soon!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Sidebar Info -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Notes Info</h5>
+                            
+                            <div class="mb-3">
+                                <h6 class="text-muted mb-2">Shared By</h6>
+                                <p class="mb-0">
+                                    <i class="far fa-user me-1"></i>
+                                    {{ notes.uploaded_by.full_name }}
+                                </p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <h6 class="text-muted mb-2">Upload Date</h6>
+                                <p class="mb-0">
+                                    <i class="far fa-clock me-1"></i>
+                                    {{ notes.created_at.strftime('%B %d, %Y') }}
+                                </p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <h6 class="text-muted mb-2">Class & Section</h6>
+                                <p class="mb-0">
+                                    <i class="fas fa-users me-1"></i>
+                                    Class {{ notes.uploaded_by.class_name }} - Section {{ notes.uploaded_by.section }}
+                                </p>
+                            </div>
+
+                            {% if notes.uploaded_by == current_user %}
+                            <hr>
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-outline-primary mb-2" onclick="toggleVisibility()">
+                                    <i class="fas {% if notes.is_public %}fa-lock{% else %}fa-globe{% endif %} me-1"></i>
+                                    Make {{ 'Private' if notes.is_public else 'Public' }}
+                                </button>
+                                <button type="button" class="btn btn-outline-danger" onclick="confirmDelete()">
+                                    <i class="fas fa-trash me-1"></i> Delete Notes
+                                </button>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+{% if notes.uploaded_by == current_user %}
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Notes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">Are you sure you want to delete these notes? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" action="{{ url_for('content.delete_notes', notes_id=notes.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Visibility Toggle Form -->
+<form id="visibilityForm" method="POST" action="{{ url_for('content.toggle_notes_visibility', notes_id=notes.id) }}" style="display: none;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+</form>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if notes.uploaded_by == current_user %}
+<script>
+function confirmDelete() {
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+
+function toggleVisibility() {
+    document.getElementById('visibilityForm').submit();
+}
+</script>
+{% endif %}
+{% endblock %}

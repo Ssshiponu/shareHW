@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">User Management</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Roll Number</th>
+                            <th>Class</th>
+                            <th>Section</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.full_name }}</td>
+                            <td>{{ user.roll_number }}</td>
+                            <td>{{ user.class_name }}</td>
+                            <td>{{ user.section }}</td>
+                            <td>
+                                <span class="badge {% if user.role == 'admin-student' %}bg-danger{% elif user.role == 'captain' %}bg-warning{% else %}bg-primary{% endif %}">
+                                    {{ user.role }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {% if user.status == 'approved' %}bg-success{% elif user.status == 'rejected' %}bg-danger{% else %}bg-warning{% endif %}">
+                                    {{ user.status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if user.status == 'pending' %}
+                                <a href="{{ url_for('admin.approve_user', user_id=user.id) }}" class="btn btn-sm btn-success">
+                                    Approve
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

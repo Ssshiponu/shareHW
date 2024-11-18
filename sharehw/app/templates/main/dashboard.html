@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - ShareHW{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <h2 class="h3">Welcome back, {{ current_user.full_name }}!</h2>
+            <p class="text-muted">Class {{ current_user.class_name }}, Section {{ current_user.section }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Homework -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="h5 mb-0">Recent Homework</h3>
+                    <a href="{{ url_for('content.homework_list') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_homework %}
+                        <div class="list-group list-group-flush">
+                            {% for hw in recent_homework %}
+                            <a href="{{ url_for('content.view_homework', id=hw.id) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ hw.title }}</h6>
+                                    <small class="text-muted">{{ hw.created_at|timeago }}</small>
+                                </div>
+                                <p class="mb-1">{{ hw.subject }}</p>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center my-4">No recent homework</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Notes -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="h5 mb-0">Recent Notes</h3>
+                    <a href="{{ url_for('content.notes_list') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_notes %}
+                        <div class="list-group list-group-flush">
+                            {% for note in recent_notes %}
+                            <a href="{{ url_for('content.view_note', id=note.id) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ note.title }}</h6>
+                                    <small class="text-muted">{{ note.created_at|timeago }}</small>
+                                </div>
+                                <p class="mb-1">{{ note.subject }}</p>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center my-4">No recent notes</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="h5 mb-0">Quick Actions</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-sm-6 col-lg-3">
+                            <a href="{{ url_for('content.upload_homework') }}" class="text-decoration-none">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-upload fa-2x text-primary mb-3"></i>
+                                        <h4 class="h6">Upload Homework</h4>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <a href="{{ url_for('content.upload_note') }}" class="text-decoration-none">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-file-alt fa-2x text-primary mb-3"></i>
+                                        <h4 class="h6">Share Notes</h4>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <a href="{{ url_for('content.search') }}" class="text-decoration-none">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-search fa-2x text-primary mb-3"></i>
+                                        <h4 class="h6">Search Content</h4>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <a href="{{ url_for('main.profile') }}" class="text-decoration-none">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-user-cog fa-2x text-primary mb-3"></i>
+                                        <h4 class="h6">Profile Settings</h4>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

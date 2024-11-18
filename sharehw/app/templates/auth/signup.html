@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - ShareHW{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+.role-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.role-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.role-card.selected {
+    border-color: var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
+}
+
+.role-card input[type="radio"] {
+    display: none;
+}
+
+.password-strength {
+    height: 5px;
+    transition: all 0.3s ease;
+    margin-top: 5px;
+}
+
+.password-strength-text {
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+.validation-icon {
+    display: none;
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.input-group .validation-icon {
+    right: 75px;
+}
+
+.form-floating .validation-icon {
+    top: 32px;
+}
+
+.is-valid + .validation-icon.valid-icon {
+    display: block;
+    color: var(--bs-success);
+}
+
+.is-invalid + .validation-icon.invalid-icon {
+    display: block;
+    color: var(--bs-danger);
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    display: none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Create Your ShareHW Account</h4>
+                </div>
+                <div class="card-body position-relative">
+                    <div class="loading-overlay">
+                        <div class="spinner-grow text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    
+                    <div id="error-container" style="display: none;"></div>
+                    <div id="success-container" style="display: none;"></div>
+                    
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <!-- Role Selection Cards -->
+                    <div class="mb-4">
+                        <h5 class="text-muted mb-3">Select Your Role</h5>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="w-100">
+                                    <input type="radio" name="role" value="student" class="role-radio">
+                                    <div class="card role-card h-100">
+                                        <div class="card-header bg-info text-white">
+                                            <h6 class="mb-0">Student</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text small">Regular student account with access to shared materials and discussions.</p>
+                                            <span class="badge bg-success">Auto-approved</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="w-100">
+                                    <input type="radio" name="role" value="captain" class="role-radio">
+                                    <div class="card role-card h-100">
+                                        <div class="card-header bg-primary text-white">
+                                            <h6 class="mb-0">Class Captain</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text small">Manage class materials and moderate discussions.</p>
+                                            <span class="badge bg-warning text-dark">Requires Approval</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="w-100">
+                                    <input type="radio" name="role" value="admin" class="role-radio">
+                                    <div class="card role-card h-100">
+                                        <div class="card-header bg-secondary text-white">
+                                            <h6 class="mb-0">Admin Student</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text small">Help manage the platform and support other students.</p>
+                                            <span class="badge bg-warning text-dark">Requires Approval</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Registration Form -->
+                    <form id="signup-form" method="POST" class="needs-validation" novalidate>
+                        {{ form.csrf_token }}
+                        
+                        <!-- Full Name -->
+                        <div class="form-floating mb-3">
+                            {{ form.full_name(class="form-control", placeholder="Enter your full name", id="full_name") }}
+                            <label for="full_name">Full Name</label>
+                            <i class="fas fa-check validation-icon valid-icon"></i>
+                            <i class="fas fa-times validation-icon invalid-icon"></i>
+                            <div class="invalid-feedback"></div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-floating mb-3">
+                            {{ form.email(class="form-control", placeholder="Enter your email address", id="email") }}
+                            <label for="email">Email Address</label>
+                            <i class="fas fa-check validation-icon valid-icon"></i>
+                            <i class="fas fa-times validation-icon invalid-icon"></i>
+                            <div class="invalid-feedback"></div>
+                            <div class="form-text">We'll never share your email with anyone else.</div>
+                        </div>
+
+                        <!-- Roll Number -->
+                        <div class="form-floating mb-3">
+                            {{ form.roll_number(class="form-control", placeholder="Enter your roll number", id="roll_number") }}
+                            <label for="roll_number">Roll Number</label>
+                            <i class="fas fa-check validation-icon valid-icon"></i>
+                            <i class="fas fa-times validation-icon invalid-icon"></i>
+                            <div class="invalid-feedback"></div>
+                        </div>
+
+                        <!-- Class and Section Row -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.class_name(class="form-select", id="class_name") }}
+                                    <label for="class_name">Class</label>
+                                    <i class="fas fa-check validation-icon valid-icon"></i>
+                                    <i class="fas fa-times validation-icon invalid-icon"></i>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.section(class="form-select", id="section") }}
+                                    <label for="section">Section</label>
+                                    <i class="fas fa-check validation-icon valid-icon"></i>
+                                    <i class="fas fa-times validation-icon invalid-icon"></i>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden Role Field -->
+                        {{ form.role(class="d-none", id="role") }}
+
+                        <!-- Password Fields -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.password(class="form-control", placeholder="Create a strong password", id="password") }}
+                                    <label for="password">Password</label>
+                                    <i class="fas fa-check validation-icon valid-icon"></i>
+                                    <i class="fas fa-times validation-icon invalid-icon"></i>
+                                    <button class="btn btn-outline-secondary toggle-password" type="button">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="password-strength rounded"></div>
+                                <div class="password-strength-text text-muted"></div>
+                                <div class="form-text">
+                                    Password must be at least 8 characters long and include letters and numbers.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.confirm_password(class="form-control", placeholder="Confirm your password", id="confirm_password") }}
+                                    <label for="confirm_password">Confirm Password</label>
+                                    <i class="fas fa-check validation-icon valid-icon"></i>
+                                    <i class="fas fa-times validation-icon invalid-icon"></i>
+                                    <button class="btn btn-outline-secondary toggle-password" type="button">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                Create Account
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Login Link -->
+                    <div class="text-center mt-3">
+                        <p class="mb-0">Already have an account? <a href="{{ url_for('auth.login') }}" class="text-decoration-none">Log In</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/signup.js') }}"></script>
+{% endblock %}

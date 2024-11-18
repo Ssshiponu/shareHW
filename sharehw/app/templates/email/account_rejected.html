@@ -1,0 +1,36 @@
+{% extends "email/base.html" %}
+
+{% block content %}
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <h2 style="color: #dc3545;">Account Application Status</h2>
+    
+    <p>Dear {{ user.full_name }},</p>
+    
+    <p>We regret to inform you that your application for a ShareHW account has been reviewed and could not be approved at this time.</p>
+    
+    <div style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+        <h4 style="margin-top: 0;">Application Details:</h4>
+        <ul style="list-style: none; padding-left: 0;">
+            <li><strong>Name:</strong> {{ user.full_name }}</li>
+            <li><strong>Roll Number:</strong> {{ user.roll_number }}</li>
+            <li><strong>Class:</strong> {{ user.class_name }}</li>
+            <li><strong>Section:</strong> {{ user.section }}</li>
+            <li><strong>Role:</strong> {{ user.role }}</li>
+        </ul>
+    </div>
+    
+    <p>Common reasons for rejection include:</p>
+    <ul>
+        <li>Incomplete or incorrect student information</li>
+        <li>Invalid roll number or class details</li>
+        <li>Duplicate account request</li>
+        <li>Unable to verify student status</li>
+    </ul>
+    
+    <p>If you believe this decision was made in error or if you would like to submit a new application with updated information, please contact your class teacher or the school administration.</p>
+    
+    <p>Best regards,<br>
+    The ShareHW Team<br>
+    Dhamrai Govt. College</p>
+</div>
+{% endblock %}

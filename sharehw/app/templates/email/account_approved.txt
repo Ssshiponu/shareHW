@@ -1,0 +1,24 @@
+Dear {{ user.full_name }},
+
+We are pleased to inform you that your ShareHW account has been approved! You can now log in to your account and start using our platform.
+
+Your Account Details:
+- Name: {{ user.full_name }}
+- Roll Number: {{ user.roll_number }}
+- Class: {{ user.class_name }}
+- Section: {{ user.section }}
+- Role: {{ user.role }}
+
+You can now:
+* Access and share homework assignments
+* Collaborate with classmates
+* Track your academic progress
+* Participate in class discussions
+
+To login to your account, visit: {{ url_for('auth.login', _external=True) }}
+
+If you have any questions or need assistance, please don't hesitate to contact us.
+
+Best regards,
+The ShareHW Team
+Dhamrai Govt. College

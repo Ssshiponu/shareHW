@@ -1,0 +1,46 @@
+{% extends "email/base.html" %}
+
+{% block content %}
+<tr>
+    <td class="content-cell">
+        <h1>Account Approved!</h1>
+        <p>Dear {{ user.full_name }},</p>
+        <p>Great news! Your ShareHW account has been approved. You can now access all platform features and start collaborating with your classmates.</p>
+        
+        <h2>Your Account Details:</h2>
+        <ul>
+            <li>Name: {{ user.full_name }}</li>
+            <li>Class: {{ user.class_display }}</li>
+            <li>Section: {{ user.section_display }}</li>
+            <li>Role: {{ user.role | title }}</li>
+        </ul>
+
+        <table class="btn btn-primary" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td align="center">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('auth.login', _external=True) }}" target="_blank">Login Now</a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <div class="alert alert-success">
+            <p><strong>What's Next?</strong></p>
+            <ul>
+                <li>Complete your profile</li>
+                <li>Join your class groups</li>
+                <li>Start sharing and accessing study materials</li>
+            </ul>
+        </div>
+
+        <p>If you need any help getting started, check out our user guide or contact our support team.</p>
+        
+        <p>Best regards,<br>The ShareHW Team</p>
+    </td>
+</tr>
+{% endblock %}

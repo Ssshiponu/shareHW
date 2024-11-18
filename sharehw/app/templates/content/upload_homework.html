@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Homework - ShareHW.net{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">Upload Homework</h2>
+                
+                <form method="POST" action="{{ url_for('content.upload_homework') }}" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.subject.label(class="form-label") }}
+                        {{ form.subject(class="form-select" + (" is-invalid" if form.subject.errors else "")) }}
+                        {% for error in form.subject.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.title.label(class="form-label") }}
+                        {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
+                        {% for error in form.title.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows=4) }}
+                        {% for error in form.description.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.due_date.label(class="form-label") }}
+                        {{ form.due_date(class="form-control" + (" is-invalid" if form.due_date.errors else ""), type="datetime-local") }}
+                        {% for error in form.due_date.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.file.label(class="form-label") }}
+                        {{ form.file(class="form-control" + (" is-invalid" if form.file.errors else "")) }}
+                        {% for error in form.file.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                        <div class="form-text">
+                            Supported formats: PDF, DOC, DOCX, TXT, Images, Excel, PowerPoint (Max size: 8MB)
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ form.notify_students(class="form-check-input" + (" is-invalid" if form.notify_students.errors else "")) }}
+                            {{ form.notify_students.label(class="form-check-label") }}
+                            {% for error in form.notify_students.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add any custom JavaScript for form handling here
+    const fileInput = document.querySelector('input[type="file"]');
+    fileInput.addEventListener('change', function() {
+        const maxSize = 8 * 1024 * 1024; // 8MB in bytes
+        if (this.files[0] && this.files[0].size > maxSize) {
+            alert('File size exceeds 8MB limit. Please choose a smaller file.');
+            this.value = '';
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}ShareHW - Student Collaboration Platform{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold mb-4">Welcome to ShareHW</h1>
+            <p class="lead mb-4">A collaborative platform for students at Dhamrai Govt. College to share homework, notes, and learn together.</p>
+            {% if not current_user.is_authenticated %}
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg me-md-2">Login</a>
+                    <a href="{{ url_for('auth.signup') }}" class="btn btn-outline-primary btn-lg">Sign Up</a>
+                </div>
+            {% else %}
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="{{ url_for('content.homework_list') }}" class="btn btn-primary btn-lg me-md-2">View Homework</a>
+                    <a href="{{ url_for('content.notes_list') }}" class="btn btn-outline-primary btn-lg">Browse Notes</a>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-6">
+            <img src="{{ url_for('static', filename='images/collaboration.svg') }}" alt="Collaboration" class="img-fluid">
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row mt-5 pt-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-book-open fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title h4">Share Homework</h3>
+                    <p class="card-text">Easily share and access homework assignments with your classmates.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-pencil-alt fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title h4">Study Notes</h3>
+                    <p class="card-text">Share your study notes and learn from others' perspectives.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title h4">Collaborate</h3>
+                    <p class="card-text">Work together with your classmates to improve understanding.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

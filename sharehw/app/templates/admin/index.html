@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Admin Dashboard</h1>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">User Management</h5>
+                    <p class="card-text">Manage user accounts, approvals, and roles.</p>
+                    <a href="{{ url_for('admin.users') }}" class="btn btn-primary">Manage Users</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Content Management</h5>
+                    <p class="card-text">Review and manage homework and notes submissions.</p>
+                    <a href="#" class="btn btn-primary">Manage Content</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">System Stats</h5>
+                    <p class="card-text">View system statistics and performance metrics.</p>
+                    <a href="#" class="btn btn-primary">View Stats</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

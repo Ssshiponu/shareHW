@@ -1,0 +1,39 @@
+{% extends "email/base.html" %}
+
+{% block content %}
+<tr>
+    <td class="content-cell">
+        <h1>Registration Pending Approval</h1>
+        <p>Dear {{ user.full_name }},</p>
+        <p>Thank you for registering with ShareHW! Your account has been created and is currently pending approval from our administrators.</p>
+        
+        <h2>Your Account Details:</h2>
+        <ul>
+            <li>Name: {{ user.full_name }}</li>
+            <li>Class: {{ user.class_display }}</li>
+            <li>Section: {{ user.section_display }}</li>
+            <li>Role: {{ user.role | title }}</li>
+        </ul>
+
+        <div class="alert alert-info">
+            <p><strong>What happens next?</strong></p>
+            <ul>
+                <li>Our administrators will review your application</li>
+                <li>You will receive an email once your account is approved</li>
+                <li>This process usually takes 1-2 business days</li>
+            </ul>
+        </div>
+
+        <p>While waiting for approval, you can:</p>
+        <ul>
+            <li>Prepare your profile information</li>
+            <li>Review our community guidelines</li>
+            <li>Explore our public resources</li>
+        </ul>
+
+        <p>If you have any questions about your application status, please contact our support team.</p>
+        
+        <p>Best regards,<br>The ShareHW Team</p>
+    </td>
+</tr>
+{% endblock %}

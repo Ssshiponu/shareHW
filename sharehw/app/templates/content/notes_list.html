@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Notes - ShareHW.net{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Study Notes</h2>
+        <a href="{{ url_for('content.upload_notes') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Upload Notes
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Subject</label>
+                    <select name="subject" class="form-select">
+                        <option value="">All Subjects</option>
+                        {% for subject in subjects %}
+                        <option value="{{ subject }}" {% if request.args.get('subject') == subject %}selected{% endif %}>
+                            {{ subject }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Topic</label>
+                    <select name="topic" class="form-select">
+                        <option value="">All Topics</option>
+                        {% for topic in topics %}
+                        <option value="{{ topic }}" {% if request.args.get('topic') == topic %}selected{% endif %}>
+                            {{ topic }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Search</label>
+                    <input type="text" name="q" class="form-control" placeholder="Search by title or description..." 
+                           value="{{ request.args.get('q', '') }}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notes List -->
+    {% if notes_list %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for note in notes_list %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title text-truncate">{{ note.title }}</h5>
+                        <span class="badge {% if note.is_public %}bg-success{% else %}bg-secondary{% endif %}">
+                            {{ 'Public' if note.is_public else 'Private' }}
+                        </span>
+                    </div>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ note.subject }} - {{ note.topic }}</h6>
+                    <p class="card-text text-truncate">{{ note.description }}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div>
+                            <a href="{{ url_for('content.view_notes', notes_id=note.id) }}" class="btn btn-outline-primary btn-sm">
+                                View Notes
+                            </a>
+                            {% if note.uploaded_by == current_user %}
+                            <button type="button" class="btn btn-outline-danger btn-sm ms-1" 
+                                    onclick="confirmDelete('{{ note.id }}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                        <div class="text-muted small">
+                            <i class="far fa-user"></i> {{ note.uploaded_by.full_name }}
+                            <br>
+                            <i class="far fa-clock"></i> {{ note.created_at.strftime('%Y-%m-%d') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if pages > 1 %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('content.notes_list', page=page-1, **request.args) }}" tabindex="-1">Previous</a>
+            </li>
+            {% for p in range(1, pages + 1) %}
+            <li class="page-item {% if p == page %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('content.notes_list', page=p, **request.args) }}">{{ p }}</a>
+            </li>
+            {% endfor %}
+            <li class="page-item {% if page == pages %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('content.notes_list', page=page+1, **request.args) }}">Next</a>
+            </li>
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-book-reader fa-3x text-muted mb-3"></i>
+        <h3>No notes found</h3>
+        <p class="text-muted">Try adjusting your search filters or be the first to share notes!</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Notes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete these notes? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function confirmDelete(notesId) {
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    const form = document.getElementById('deleteForm');
+    form.action = "{{ url_for('content.delete_notes', notes_id=0) }}".replace('0', notesId);
+    modal.show();
+}
+</script>
+{% endblock %}

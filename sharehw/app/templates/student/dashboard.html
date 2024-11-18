@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - ShareHW{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="h4 mb-1">Welcome back, {{ current_user.full_name }}!</h2>
+                            <p class="mb-0">Class {{ current_user.class_name }}, Section {{ current_user.section }}</p>
+                        </div>
+                        <div class="text-end">
+                            <p class="mb-0"><i class="fas fa-calendar-alt me-2"></i>{{ today.strftime('%B %d, %Y') }}</p>
+                            <p class="mb-0"><i class="fas fa-clock me-2"></i>{{ pending_count }} pending assignments</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Completed</h6>
+                    <h2 class="mb-0">{{ completed_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Pending</h6>
+                    <h2 class="mb-0">{{ pending_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Overdue</h6>
+                    <h2 class="mb-0">{{ overdue_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Total</h6>
+                    <h2 class="mb-0">{{ total_count }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Homework Section -->
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Active Homework -->
+            <div class="card mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Active Homework</h5>
+                    <div class="d-flex gap-2">
+                        <select class="form-select form-select-sm" style="width: auto;" id="subjectFilter">
+                            <option value="">All Subjects</option>
+                            {% for subject in subjects %}
+                            <option value="{{ subject }}">{{ subject }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" class="form-control form-control-sm" placeholder="Search..." id="searchHomework" style="width: 200px;">
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for hw in active_homework %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">
+                                        <a href="{{ url_for('content.view_homework', id=hw.id) }}" class="text-decoration-none">
+                                            {{ hw.title }}
+                                        </a>
+                                    </h6>
+                                    <p class="mb-1 text-muted">{{ hw.subject }}</p>
+                                </div>
+                                <div class="text-end">
+                                    <div class="mb-1">
+                                        <span class="badge {% if hw.status == 'overdue' %}bg-danger{% elif hw.status == 'pending' %}bg-warning{% else %}bg-success{% endif %}">
+                                            {{ hw.status|title }}
+                                        </span>
+                                    </div>
+                                    <small class="text-muted">
+                                        Due: {{ hw.due_date.strftime('%b %d, %I:%M %p') }}
+                                    </small>
+                                </div>
+                            </div>
+                            {% if hw.description %}
+                            <p class="mb-0 mt-2 text-muted small">{{ hw.description|truncate(100) }}</p>
+                            {% endif %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-muted mb-0">No active homework assignments</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if active_homework %}
+                <div class="card-footer bg-white text-end">
+                    <a href="{{ url_for('content.homework_list') }}" class="btn btn-primary btn-sm">View All Homework</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Due Today -->
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Due Today</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for hw in due_today %}
+                        <a href="{{ url_for('content.view_homework', id=hw.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ hw.title }}</h6>
+                                <small class="text-danger">
+                                    <i class="fas fa-clock me-1"></i>{{ hw.due_date.strftime('%I:%M %p') }}
+                                </small>
+                            </div>
+                            <p class="mb-1 small text-muted">{{ hw.subject }}</p>
+                        </a>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-muted mb-0">No assignments due today</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Recent Activity</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for activity in recent_activities %}
+                        <div class="list-group-item">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-{{ activity.icon }} text-{{ activity.color }}"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="mb-1">{{ activity.message }}</p>
+                                    <small class="text-muted">{{ activity.timestamp|timeago }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-muted mb-0">No recent activity</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const subjectFilter = document.getElementById('subjectFilter');
+    const searchInput = document.getElementById('searchHomework');
+    const homeworkItems = document.querySelectorAll('.list-group-item');
+
+    function filterHomework() {
+        const subject = subjectFilter.value.toLowerCase();
+        const search = searchInput.value.toLowerCase();
+
+        homeworkItems.forEach(item => {
+            const itemSubject = item.querySelector('.text-muted').textContent.toLowerCase();
+            const itemTitle = item.querySelector('h6').textContent.toLowerCase();
+            const itemDescription = item.querySelector('p.small') ? 
+                                  item.querySelector('p.small').textContent.toLowerCase() : '';
+
+            const matchesSubject = !subject || itemSubject.includes(subject);
+            const matchesSearch = !search || 
+                                itemTitle.includes(search) || 
+                                itemDescription.includes(search);
+
+            item.style.display = matchesSubject && matchesSearch ? 'block' : 'none';
+        });
+    }
+
+    subjectFilter.addEventListener('change', filterHomework);
+    searchInput.addEventListener('input', filterHomework);
+});
+</script>
+{% endblock %}

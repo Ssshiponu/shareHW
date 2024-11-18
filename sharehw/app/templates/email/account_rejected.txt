@@ -1,0 +1,22 @@
+Dear {{ user.full_name }},
+
+We regret to inform you that your application for a ShareHW account has been reviewed and could not be approved at this time.
+
+Application Details:
+- Name: {{ user.full_name }}
+- Roll Number: {{ user.roll_number }}
+- Class: {{ user.class_name }}
+- Section: {{ user.section }}
+- Role: {{ user.role }}
+
+Common reasons for rejection include:
+* Incomplete or incorrect student information
+* Invalid roll number or class details
+* Duplicate account request
+* Unable to verify student status
+
+If you believe this decision was made in error or if you would like to submit a new application with updated information, please contact your class teacher or the school administration.
+
+Best regards,
+The ShareHW Team
+Dhamrai Govt. College

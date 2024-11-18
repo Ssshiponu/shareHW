@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Verify Your ShareHW Account</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h2>Welcome to ShareHW!</h2>
+    
+    <p>Hello {{ user.full_name }},</p>
+    
+    <p>Thank you for registering with ShareHW! To complete your registration and verify your email address, please click the button below:</p>
+    
+    <a href="{{ verify_url }}" class="button">Verify Email Address</a>
+    
+    <p>If the button doesn't work, you can also copy and paste this link into your browser:</p>
+    <p>{{ verify_url }}</p>
+    
+    <p>If you did not register for ShareHW, please ignore this email.</p>
+    
+    <div class="footer">
+        <p>Best regards,<br>The ShareHW Team</p>
+        <p>This is an automated message, please do not reply to this email.</p>
+    </div>
+</body>
+</html>
