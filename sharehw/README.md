@@ -22,7 +22,7 @@ ShareHW is a web application designed to facilitate homework and notes sharing a
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/MohinUddin/sharehw.git
+git clone https://github.com/ssshiponu/sharehw.git
 cd sharehw
 ```
 
